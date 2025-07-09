@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Personal Finance Calculator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .tab-active {
+            border-color: #3b82f6;
+            color: #3b82f6;
+            background-color: #eff6ff;
+        }
+        .loader {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #3b82f6;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+    <div class="container mx-auto p-4 md:p-8 max-w-7xl">
+        <header class="text-center mb-8">
+            <h1 class="text-4xl font-bold text-gray-900">Personal Finance Toolkit</h1>
+            <p class="text-lg text-gray-600 mt-2">Your guide to smart investment and loan planning.</p>
+        </header>
+
+        <!-- Tabs -->
+        <div class="mb-8">
+            <div class="border-b border-gray-200">
+                <nav class="-mb-px flex justify-center space-x-4 md:space-x-8" aria-label="Tabs">
+                    <button id="sip-tab" onclick="switchTab('sip')" class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-lg tab-active">
+                        SIP Calculator
+                    </button>
+                    <button id="emi-tab" onclick="switchTab('emi')" class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-lg text-gray-500 hover:text-gray-700 hover:border-gray-300">
+                        EMI Calculator
+                    </button>
+                </nav>
+            </div>
+        </div>
+
+        <!-- SIP Calculator Page -->
+        <div id="sip-page">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <!-- SIP Inputs -->
+                <div class="lg:col-span-1 bg-white p-6 rounded-xl shadow-md">
+                    <h2 class="text-2xl font-semibold mb-6 border-b pb-4">Investment Parameters</h2>
+                    <div class="space-y-5">
+                        <div>
+                            <label for="sipAmount" class="block text-sm font-medium text-gray-700">SIP Amount (₹)</label>
+                            <input type="text" id="sipAmount" value="5,000" onkeyup="formatInput(this)" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                            <p id="sipAmountWords" class="text-xs text-gray-500 mt-1 h-4"></p>
+                        </div>
+                        <div>
+                            <label for="sipTenure" class="block text-sm font-medium text-gray-700">Tenure (Years)</label>
+                            <input type="number" id="sipTenure" value="10" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                        </div>
+                        <div>
+                            <label for="sipDrift" class="block text-sm font-medium text-gray-700">Expected Annual Drift (%)</label>
+                            <input type="number" id="sipDrift" value="12" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                        </div>
+                        <div>
+                            <label for="sipVolatility" class="block text-sm font-medium text-gray-700">Annual Volatility (%)</label>
+                            <input type="number" id="sipVolatility" value="15" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                        </div>
+                        <div>
+                            <label for="sipFrequency" class="block text-sm font-medium text-gray-700">Investment Frequency</label>
+                            <select id="sipFrequency" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                                <option value="monthly" selected>Monthly</option>
+                                <option value="quarterly">Quarterly</option>
+                                <option value="half-yearly">Half-Yearly</option>
+                                <option value="annual">Annual</option>
+                            </select>
+                        </div>
+                        <button onclick="calculateSIP()" class="w-full bg-blue-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-blue-700 transition duration-300 text-lg">
+                            Calculate Wealth
+                        </button>
+                    </div>
+                </div>
+
+                <!-- SIP Results -->
+                <div class="lg:col-span-2 bg-white p-6 rounded-xl shadow-md">
+                    <h2 class="text-2xl font-semibold mb-4">Projected Wealth Distribution</h2>
+                     <div id="sip-loader" class="hidden flex justify-center items-center h-96">
+                        <div class="loader"></div>
+                     </div>
+                    <div id="sip-results-container" class="hidden">
+                        <div id="sip-summary" class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6 text-center"></div>
+                        <div id="sip-chart" class="w-full h-96"></div>
+                    </div>
+                     <div id="sip-initial-message" class="flex items-center justify-center h-full text-gray-500">
+                        <p>Enter your investment details and click "Calculate Wealth" to see your projection.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- EMI Calculator Page -->
+        <div id="emi-page" class="hidden">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <!-- EMI Inputs -->
+                <div class="lg:col-span-1 bg-white p-6 rounded-xl shadow-md">
+                    <h2 class="text-2xl font-semibold mb-6 border-b pb-4">Loan Parameters</h2>
+                    <div class="space-y-5">
+                        <div>
+                            <label for="loanAmount" class="block text-sm font-medium text-gray-700">Loan Amount (₹)</label>
+                            <input type="text" id="loanAmount" value="10,00,000" onkeyup="formatInput(this)" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                            <p id="loanAmountWords" class="text-xs text-gray-500 mt-1 h-4"></p>
+                        </div>
+                        <div>
+                            <label for="interestRate" class="block text-sm font-medium text-gray-700">Annual Interest Rate (%)</label>
+                            <input type="number" id="interestRate" value="8.5" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                        </div>
+                        <div>
+                            <label for="loanTenure" class="block text-sm font-medium text-gray-700">Loan Tenure (Years)</label>
+                            <input type="number" id="loanTenure" value="20" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                        </div>
+                        <button onclick="calculateEMI()" class="w-full bg-blue-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-blue-700 transition duration-300 text-lg">
+                            Calculate EMI
+                        </button>
+                    </div>
+                </div>
+
+                <!-- EMI Results -->
+                <div class="lg:col-span-2 bg-white p-6 rounded-xl shadow-md">
+                    <h2 class="text-2xl font-semibold mb-4">Loan Repayment Details</h2>
+                    <div id="emi-results-container" class="hidden">
+                        <div id="emi-summary" class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6 text-center"></div>
+                        <div id="emi-chart" class="w-full h-96"></div>
+                        <div id="emi-cumulative-chart" class="w-full h-96 mt-12"></div>
+                    </div>
+                    <div id="emi-initial-message" class="flex items-center justify-center h-full text-gray-500">
+                        <p>Enter your loan details and click "Calculate EMI" to see your repayment schedule.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- UTILITY FUNCTIONS ---
+        const formatCurrency = (num, useShortScale = false) => {
+            if (useShortScale) {
+                if (num >= 10000000) return `₹ ${(num / 10000000).toFixed(2)} Cr`;
+                if (num >= 100000) return `₹ ${(num / 100000).toFixed(2)} L`;
+                if (num >= 1000) return `₹ ${(num / 1000).toFixed(2)} K`;
+            }
+            return `₹ ${Math.round(num).toLocaleString('en-IN')}`;
+        };
+
+        function numberToWordsIndian(num) {
+            const a = ['', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten', 'eleven', 'twelve', 'thirteen', 'fourteen', 'fifteen', 'sixteen', 'seventeen', 'eighteen', 'nineteen'];
+            const b = ['', '', 'twenty', 'thirty', 'forty', 'fifty', 'sixty', 'seventy', 'eighty', 'ninety'];
+
+            const inWords = (n, s) => {
+                if (n === 0) return '';
+                let str = '';
+                if (n > 19) {
+                    str += b[Math.floor(n / 10)] + ' ' + a[n % 10];
+                } else {
+                    str += a[n];
+                }
+                return str.trim() + ' ' + s + ' ';
+            };
+
+            if (num === 0) return 'Zero';
+            if (num > 9999999999) return 'Number too large';
+            
+            let n = Math.floor(num);
+            let output = '';
+            output += inWords(Math.floor(n / 10000000), 'crore');
+            n %= 10000000;
+            output += inWords(Math.floor(n / 100000), 'lakh');
+            n %= 100000;
+            output += inWords(Math.floor(n / 1000), 'thousand');
+            n %= 1000;
+            output += inWords(Math.floor(n / 100), 'hundred');
+            n %= 100;
+            if (n > 0) {
+                if (output !== '' && !output.endsWith('hundred ')) {
+                    output += 'and ';
+                }
+                output += inWords(n, '');
+            }
+            
+            return output.trim().replace(/\s+/g, ' ').replace(/^\w/, c => c.toUpperCase());
+        }
+
+        function formatInput(el) {
+            let val = el.value.replace(/,/g, '');
+            if (val === '' || isNaN(val)) {
+                el.value = '';
+                document.getElementById(el.id + 'Words').innerText = '';
+                return;
+            }
+            
+            let num = parseInt(val, 10);
+            el.value = num.toLocaleString('en-IN');
+            
+            const wordsEl = document.getElementById(el.id + 'Words');
+            if (wordsEl) {
+                wordsEl.innerText = numberToWordsIndian(num) + ' only';
+            }
+        }
+        
+        window.onload = function() {
+            formatInput(document.getElementById('sipAmount'));
+            formatInput(document.getElementById('loanAmount'));
+        };
+
+        // --- TAB SWITCHING LOGIC ---
+        function switchTab(tabName) {
+            const sipPage = document.getElementById('sip-page');
+            const emiPage = document.getElementById('emi-page');
+            const sipTab = document.getElementById('sip-tab');
+            const emiTab = document.getElementById('emi-tab');
+
+            if (tabName === 'sip') {
+                sipPage.classList.remove('hidden');
+                emiPage.classList.add('hidden');
+                sipTab.classList.add('tab-active');
+                emiTab.classList.remove('tab-active');
+            } else {
+                sipPage.classList.add('hidden');
+                emiPage.classList.remove('hidden');
+                sipTab.classList.remove('tab-active');
+                emiTab.classList.add('tab-active');
+            }
+        }
+
+        // --- SIP CALCULATOR LOGIC ---
+        function calculateSIP() {
+            const sipAmount = parseFloat(document.getElementById('sipAmount').value.replace(/,/g, ''));
+            const tenureYears = parseInt(document.getElementById('sipTenure').value);
+            const annualDrift = parseFloat(document.getElementById('sipDrift').value) / 100;
+            const annualVolatility = parseFloat(document.getElementById('sipVolatility').value) / 100;
+            const frequency = document.getElementById('sipFrequency').value;
+            const numPaths = 10000;
+
+            document.getElementById('sip-loader').classList.remove('hidden');
+            document.getElementById('sip-results-container').classList.add('hidden');
+            document.getElementById('sip-initial-message').classList.add('hidden');
+
+            setTimeout(() => {
+                const wealthDistribution = simulateSipWealth(sipAmount, tenureYears, annualDrift, annualVolatility, frequency, numPaths);
+                wealthDistribution.sort((a, b) => a - b);
+
+                const totalInvested = sipAmount * tenureYears * getPeriodsPerYear(frequency);
+                const meanWealth = wealthDistribution.reduce((a, b) => a + b, 0) / numPaths;
+                const medianWealth = wealthDistribution[Math.floor(numPaths / 2)];
+                const p10 = wealthDistribution[Math.floor(numPaths * 0.1)];
+                const p90 = wealthDistribution[Math.floor(numPaths * 0.9)];
+
+                const summaryDiv = document.getElementById('sip-summary');
+                summaryDiv.innerHTML = `
+                    <div class="bg-gray-100 p-4 rounded-lg"><p class="text-sm text-gray-600">Total Invested</p><p class="text-xl font-bold text-gray-900">${formatCurrency(totalInvested)}</p></div>
+                    <div class="bg-blue-100 p-4 rounded-lg"><p class="text-sm text-blue-800">Expected (Mean)</p><p class="text-xl font-bold text-blue-900">${formatCurrency(meanWealth, true)}</p></div>
+                    <div class="bg-green-100 p-4 rounded-lg"><p class="text-sm text-green-800">Median (50%)</p><p class="text-xl font-bold text-green-900">${formatCurrency(medianWealth, true)}</p></div>
+                    <div class="bg-yellow-100 p-4 rounded-lg"><p class="text-sm text-yellow-800">80% Prob. Range</p><p class="text-xl font-bold text-yellow-900">${formatCurrency(p10, true)} - ${formatCurrency(p90, true)}</p></div>`;
+
+                plotSipDistribution(wealthDistribution, meanWealth, medianWealth);
+
+                document.getElementById('sip-loader').classList.add('hidden');
+                document.getElementById('sip-results-container').classList.remove('hidden');
+            }, 50);
+        }
+
+        function getPeriodsPerYear(frequency) {
+            const freqMap = { 'monthly': 12, 'quarterly': 4, 'half-yearly': 2, 'annual': 1 };
+            return freqMap[frequency];
+        }
+
+        function simulateSipWealth(sipAmount, tenureYears, annualDrift, annualVolatility, frequency, numPaths) {
+            const periodsPerYear = getPeriodsPerYear(frequency);
+            const totalInstallments = tenureYears * periodsPerYear;
+            const finalWealthDistribution = new Array(numPaths).fill(0);
+            const installmentTenures = Array.from({ length: totalInstallments }, (_, i) => (totalInstallments - i) / periodsPerYear);
+
+            for (let j = 0; j < numPaths; j++) {
+                let totalWealthForPath = 0;
+                for (let k = 0; k < totalInstallments; k++) {
+                    const T_k = installmentTenures[k];
+                    const Z = Math.sqrt(-2 * Math.log(Math.random())) * Math.cos(2 * Math.PI * Math.random());
+                    const W_T_k = Z * Math.sqrt(T_k);
+                    const driftTerm = (annualDrift - 0.5 * Math.pow(annualVolatility, 2)) * T_k;
+                    const stochasticTerm = annualVolatility * W_T_k;
+                    const futureValue = sipAmount * Math.exp(driftTerm + stochasticTerm);
+                    totalWealthForPath += futureValue;
+                }
+                finalWealthDistribution[j] = totalWealthForPath;
+            }
+            return finalWealthDistribution;
+        }
+
+        function plotSipDistribution(wealthData, mean, median) {
+            const useCrores = mean >= 7500000;
+            const divisor = useCrores ? 10000000 : 100000;
+            const suffix = useCrores ? ' Cr' : ' L';
+            const xAxisTitle = `Accumulated Wealth (${suffix.trim()})`;
+            const displayWealthData = wealthData.map(d => d / divisor);
+            const displayMean = mean / divisor;
+            const displayMedian = median / divisor;
+
+            const trace = { x: displayWealthData, type: 'histogram', histnorm: 'probability density', name: 'Wealth Distribution', marker: { color: 'rgba(59, 130, 246, 0.7)', line: { color: 'rgba(30, 64, 175, 1)', width: 1 } }, hovertemplate: `Wealth: %{x:.2f}${suffix}<br>Density: %{y}<extra></extra>` };
+            const layout = { title: 'Distribution of Final Corpus', xaxis: { title: xAxisTitle, automargin: true }, yaxis: { title: 'Probability Density', automargin: true }, shapes: [ { type: 'line', x0: displayMean, y0: 0, x1: displayMean, y1: 1, yref: 'paper', line: { color: '#ef4444', width: 2, dash: 'dash' } }, { type: 'line', x0: displayMedian, y0: 0, x1: displayMedian, y1: 1, yref: 'paper', line: { color: '#10b981', width: 2, dash: 'dot' } } ], annotations: [ { x: displayMean, y: 0.95, yref: 'paper', text: `Mean: ${formatCurrency(mean, true)}`, showarrow: false, xanchor: 'left', font: {color: '#ef4444'}}, { x: displayMedian, y: 0.85, yref: 'paper', text: `Median: ${formatCurrency(median, true)}`, showarrow: false, xanchor: 'right', font: {color: '#10b981'}} ], showlegend: false, margin: { l: 70, r: 50, b: 60, t: 80, pad: 4 } };
+            Plotly.newPlot('sip-chart', [trace], layout, {responsive: true});
+        }
+
+        // --- EMI CALCULATOR LOGIC ---
+        function calculateEMI() {
+            const principal = parseFloat(document.getElementById('loanAmount').value.replace(/,/g, ''));
+            const annualRate = parseFloat(document.getElementById('interestRate').value);
+            const tenureYears = parseInt(document.getElementById('loanTenure').value);
+
+            document.getElementById('emi-initial-message').classList.add('hidden');
+            const monthlyRate = (annualRate / 12) / 100;
+            const numPayments = tenureYears * 12;
+            const emi = (principal * monthlyRate * Math.pow(1 + monthlyRate, numPayments)) / (Math.pow(1 + monthlyRate, numPayments) - 1);
+            const totalPayment = emi * numPayments;
+            const totalInterest = totalPayment - principal;
+
+            const summaryDiv = document.getElementById('emi-summary');
+            summaryDiv.innerHTML = `<div class="bg-blue-100 p-4 rounded-lg"><p class="text-sm text-blue-800">Monthly EMI</p><p class="text-2xl font-bold text-blue-900">${formatCurrency(emi)}</p></div><div class="bg-red-100 p-4 rounded-lg"><p class="text-sm text-red-800">Total Interest</p><p class="text-2xl font-bold text-red-900">${formatCurrency(totalInterest)}</p></div><div class="bg-gray-100 p-4 rounded-lg"><p class="text-sm text-gray-600">Total Payment</p><p class="text-2xl font-bold text-gray-900">${formatCurrency(totalPayment)}</p></div>`;
+            
+            const schedule = generateAmortizationSchedule(principal, annualRate, tenureYears, emi);
+            plotAmortization(schedule);
+            plotCumulativeAmortization(schedule);
+            
+            document.getElementById('emi-results-container').classList.remove('hidden');
+        }
+
+        function generateAmortizationSchedule(principal, annualRate, tenureYears, emi) {
+            const monthlyRate = (annualRate / 12) / 100;
+            const numPayments = tenureYears * 12;
+            const schedule = [];
+            let openingBalance = principal;
+            let cumulativeInterest = 0;
+            let cumulativePrincipal = 0;
+
+            for (let i = 1; i <= numPayments; i++) {
+                const interestPaid = openingBalance * monthlyRate;
+                const principalPaid = emi - interestPaid;
+                cumulativeInterest += interestPaid;
+                cumulativePrincipal += principalPaid;
+                const closingBalance = openingBalance - principalPaid;
+                schedule.push({ month: i, interest_paid: interestPaid, principal_paid: principalPaid, cumulative_interest_paid: cumulativeInterest, cumulative_principal_paid: cumulativePrincipal });
+                openingBalance = closingBalance;
+            }
+            return schedule;
+        }
+
+        function plotAmortization(schedule) {
+            const months = schedule.map(row => row.month);
+            const principalPaid = schedule.map(row => row.principal_paid);
+            const interestPaid = schedule.map(row => row.interest_paid);
+
+            const principalTrace = { x: months, y: principalPaid, mode: 'lines', name: 'Principal Component', line: { color: 'rgb(34, 197, 94)', width: 3 } };
+            const interestTrace = { x: months, y: interestPaid, mode: 'lines', name: 'Interest Component', line: { color: 'rgb(239, 68, 68)', width: 3 } };
+            
+            const layout = { title: 'EMI Repayment Journey: Principal vs. Interest', xaxis: { title: 'Payment Number (Month)' }, yaxis: { title: 'Amount (₹)' }, legend: { x: 0.5, y: 1.15, xanchor: 'center', orientation: 'h' } };
+            Plotly.newPlot('emi-chart', [principalTrace, interestTrace], layout, {responsive: true});
+        }
+
+        function plotCumulativeAmortization(schedule) {
+            const years = schedule.map(row => row.month / 12);
+            const cumInterest = schedule.map(row => row.cumulative_interest_paid);
+            const cumPrincipal = schedule.map(row => row.cumulative_principal_paid);
+
+            const maxYValue = Math.max(cumInterest[cumInterest.length - 1], cumPrincipal[cumPrincipal.length - 1]);
+            let divisor = 1;
+            let suffix = '₹';
+
+            if (maxYValue >= 10000000) { divisor = 10000000; suffix = 'Cr'; } 
+            else if (maxYValue >= 100000) { divisor = 100000; suffix = 'L'; }
+            else if (maxYValue >= 1000) { divisor = 1000; suffix = 'K'; }
+
+            const displayCumInterest = cumInterest.map(d => d / divisor);
+            const displayCumPrincipal = cumPrincipal.map(d => d / divisor);
+
+            const principalTrace = { x: years, y: displayCumPrincipal, mode: 'lines', name: 'Cumulative Principal', line: { color: 'rgb(34, 197, 94)', width: 3 }, fill: 'tozeroy' };
+            const interestTrace = { x: years, y: displayCumInterest, mode: 'lines', name: 'Cumulative Interest', line: { color: 'rgb(239, 68, 68)', width: 3 }, fill: 'tozeroy' };
+
+            const layout = {
+                title: 'Cumulative Repayment Progress',
+                xaxis: { title: 'Tenure (Years)' },
+                yaxis: { title: `Cumulative Amount (${suffix})` },
+                legend: { x: 0.5, y: 1.15, xanchor: 'center', orientation: 'h' }
+            };
+
+            Plotly.newPlot('emi-cumulative-chart', [principalTrace, interestTrace], layout, {responsive: true});
+        }
+    </script>
+</body>
+</html>
