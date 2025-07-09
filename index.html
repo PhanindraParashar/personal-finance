@@ -363,14 +363,19 @@
         }
 
         function plotAmortization(schedule) {
-            const months = schedule.map(row => row.month);
+            const years = schedule.map(row => row.month / 12);
             const principalPaid = schedule.map(row => row.principal_paid);
             const interestPaid = schedule.map(row => row.interest_paid);
 
-            const principalTrace = { x: months, y: principalPaid, mode: 'lines', name: 'Principal Component', line: { color: 'rgb(34, 197, 94)', width: 3 } };
-            const interestTrace = { x: months, y: interestPaid, mode: 'lines', name: 'Interest Component', line: { color: 'rgb(239, 68, 68)', width: 3 } };
+            const principalTrace = { x: years, y: principalPaid, mode: 'lines', name: 'Principal Component', line: { color: 'rgb(34, 197, 94)', width: 3 } };
+            const interestTrace = { x: years, y: interestPaid, mode: 'lines', name: 'Interest Component', line: { color: 'rgb(239, 68, 68)', width: 3 } };
             
-            const layout = { title: 'EMI Repayment Journey: Principal vs. Interest', xaxis: { title: 'Payment Number (Month)' }, yaxis: { title: 'Amount (₹)' }, legend: { x: 0.5, y: 1.15, xanchor: 'center', orientation: 'h' } };
+            const layout = { 
+                title: 'EMI Repayment Journey: Principal vs. Interest', 
+                xaxis: { title: 'Tenure (Years)' }, 
+                yaxis: { title: 'Amount (₹)' }, 
+                legend: { x: 0.5, y: 1.15, xanchor: 'center', orientation: 'h' } 
+            };
             Plotly.newPlot('emi-chart', [principalTrace, interestTrace], layout, {responsive: true});
         }
 
