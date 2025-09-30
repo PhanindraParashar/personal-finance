@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Personal Finance Calculator</title>
+    <title>Personal Finance Toolkit</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <script src="https://cdn.plot.ly/plotly-2.32.0.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         body {
@@ -41,12 +41,15 @@
         <!-- Tabs -->
         <div class="mb-8">
             <div class="border-b border-gray-200">
-                <nav class="-mb-px flex justify-center space-x-4 md:space-x-8" aria-label="Tabs">
+                <nav class="-mb-px flex flex-wrap justify-center space-x-4 md:space-x-8" aria-label="Tabs">
                     <button id="sip-tab" onclick="switchTab('sip')" class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-lg tab-active">
                         SIP Calculator
                     </button>
                     <button id="emi-tab" onclick="switchTab('emi')" class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-lg text-gray-500 hover:text-gray-700 hover:border-gray-300">
                         EMI Calculator
+                    </button>
+                    <button id="compare-tab" onclick="switchTab('compare')" class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-lg text-gray-500 hover:text-gray-700 hover:border-gray-300">
+                        EMI vs SIP
                     </button>
                 </nav>
             </div>
@@ -96,7 +99,7 @@
                     <h2 class="text-2xl font-semibold mb-4">Projected Wealth Distribution</h2>
                      <div id="sip-loader" class="hidden flex justify-center items-center h-96">
                         <div class="loader"></div>
-                     </div>
+                    </div>
                     <div id="sip-results-container" class="hidden">
                         <div id="sip-summary" class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6 text-center"></div>
                         <div id="sip-chart" class="w-full h-96"></div>
@@ -122,7 +125,7 @@
                         </div>
                         <div>
                             <label for="interestRate" class="block text-sm font-medium text-gray-700">Annual Interest Rate (%)</label>
-                            <input type="number" id="interestRate" value="8.5" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                            <input type="number" id="interestRate" value="8.5" step="0.1" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
                         </div>
                         <div>
                             <label for="loanTenure" class="block text-sm font-medium text-gray-700">Loan Tenure (Years)</label>
@@ -148,15 +151,110 @@
                 </div>
             </div>
         </div>
+        
+        <!-- EMI vs SIP Page -->
+        <div id="compare-page" class="hidden">
+            <div class="text-center mb-6">
+                <h2 class="text-3xl font-semibold">EMI vs SIP: Buy vs Rent & Invest</h2>
+                <p class="text-md text-gray-600 mt-1">Simulating future values using Monte Carlo to compare owning an asset versus renting and investing the difference.</p>
+            </div>
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <!-- Comparison Inputs -->
+                <div class="lg:col-span-1 bg-white p-6 rounded-xl shadow-md">
+                    <h2 class="text-2xl font-semibold mb-6 border-b pb-4">Comparison Parameters</h2>
+                    <div class="space-y-4">
+                        <!-- Asset Price (Centered Top) -->
+                        <div>
+                            <label for="compareAssetAmount" class="block text-sm font-medium text-gray-700">Asset Price (₹)</label>
+                            <input type="text" id="compareAssetAmount" value="1,00,00,000" onkeyup="formatInput(this)" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                            <p id="compareAssetAmountWords" class="text-xs text-gray-500 mt-1 h-4"></p>
+                        </div>
+                        
+                        <!-- Two-Column Layout -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 pt-2">
+                            <!-- Left Column: Loan Details -->
+                            <div class="space-y-4">
+                                <h3 class="font-semibold text-gray-700">Loan & Asset</h3>
+                                <div>
+                                    <label for="compareLoanRate" class="block text-sm font-medium text-gray-700">Loan Interest Rate (%)</label>
+                                    <input type="number" id="compareLoanRate" value="10.5" step="0.1" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                                </div>
+                                <div>
+                                    <label for="compareLoanTenure" class="block text-sm font-medium text-gray-700">Loan Tenure (Years)</label>
+                                    <input type="number" id="compareLoanTenure" value="15" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                                </div>
+                                <div>
+                                    <label for="compareStartRent" class="block text-sm font-medium text-gray-700">Monthly Rent (₹)</label>
+                                    <input type="text" id="compareStartRent" value="35,000" onkeyup="formatInput(this)" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                                     <p id="compareStartRentWords" class="text-xs text-gray-500 mt-1 h-4"></p>
+                                </div>
+                                 <div>
+                                    <label for="compareRentInflation" class="block text-sm font-medium text-gray-700">Rent Inflation (%)</label>
+                                    <input type="number" id="compareRentInflation" value="3" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                                </div>
+                                 <div>
+                                    <label for="compareAssetDrift" class="block text-sm font-medium text-gray-700">Asset Drift (%)</label>
+                                    <input type="number" id="compareAssetDrift" value="7" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                                </div>
+                                 <div>
+                                    <label for="compareAssetVol" class="block text-sm font-medium text-gray-700">Asset Volatility (%)</label>
+                                    <input type="number" id="compareAssetVol" value="2" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                                </div>
+                            </div>
+                            <!-- Right Column: SIP Details -->
+                            <div class="space-y-4">
+                                <h3 class="font-semibold text-gray-700">SIP & Simulation</h3>
+                                <div>
+                                    <label for="compareSipDrift" class="block text-sm font-medium text-gray-700">SIP Drift (%)</label>
+                                    <input type="number" id="compareSipDrift" value="12" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                                </div>
+                                <div>
+                                    <label for="compareSipVol" class="block text-sm font-medium text-gray-700">SIP Volatility (%)</label>
+                                    <input type="number" id="compareSipVol" value="15" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                                </div>
+                                 <div>
+                                    <label for="compareNumPaths" class="block text-sm font-medium text-gray-700">Simulations (Paths)</label>
+                                    <input type="number" id="compareNumPaths" value="10000" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                                    <p class="text-xs text-gray-500 mt-1">Number of Monte Carlo simulation paths to run (higher = more accuracy, but slower).</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Button -->
+                        <div class="pt-4">
+                            <button id="compareRunBtn" onclick="calculateCompare()" class="w-full bg-blue-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-blue-700 transition duration-300 text-lg">
+                               Compare EMI vs SIP
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                 <!-- Comparison Results -->
+                <div class="lg:col-span-2 bg-white p-6 rounded-xl shadow-md">
+                     <div id="compare-loader" class="hidden flex justify-center items-center h-full">
+                        <div class="loader"></div>
+                    </div>
+                    <div id="compare-results-container" class="hidden">
+                         <div id="compare-summary" class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6 text-center"></div>
+                         <div id="compare-overlap-chart" class="w-full h-96"></div>
+                         <div id="compare-diff-chart" class="w-full h-96 mt-12"></div>
+                    </div>
+                    <div id="compare-initial-message" class="flex items-center justify-center h-full text-gray-500">
+                        <p>Enter your parameters and click "Compare" to run the simulation.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </div>
 
     <script>
         // --- UTILITY FUNCTIONS ---
         const formatCurrency = (num, useShortScale = false) => {
+            if (isNaN(num) || num === null) return '₹ 0';
             if (useShortScale) {
-                if (num >= 10000000) return `₹ ${(num / 10000000).toFixed(2)} Cr`;
-                if (num >= 100000) return `₹ ${(num / 100000).toFixed(2)} L`;
-                if (num >= 1000) return `₹ ${(num / 1000).toFixed(2)} K`;
+                if (Math.abs(num) >= 10000000) return `₹ ${(num / 10000000).toFixed(2)} Cr`;
+                if (Math.abs(num) >= 100000) return `₹ ${(num / 100000).toFixed(2)} L`;
+                if (Math.abs(num) >= 1000) return `₹ ${(num / 1000).toFixed(2)} K`;
             }
             return `₹ ${Math.round(num).toLocaleString('en-IN')}`;
         };
@@ -203,7 +301,8 @@
             let val = el.value.replace(/,/g, '');
             if (val === '' || isNaN(val)) {
                 el.value = '';
-                document.getElementById(el.id + 'Words').innerText = '';
+                const wordsEl = document.getElementById(el.id + 'Words');
+                if (wordsEl) wordsEl.innerText = '';
                 return;
             }
             
@@ -219,26 +318,59 @@
         window.onload = function() {
             formatInput(document.getElementById('sipAmount'));
             formatInput(document.getElementById('loanAmount'));
+            formatInput(document.getElementById('compareAssetAmount'));
+            formatInput(document.getElementById('compareStartRent'));
         };
 
         // --- TAB SWITCHING LOGIC ---
         function switchTab(tabName) {
-            const sipPage = document.getElementById('sip-page');
-            const emiPage = document.getElementById('emi-page');
-            const sipTab = document.getElementById('sip-tab');
-            const emiTab = document.getElementById('emi-tab');
+            const pages = ['sip-page', 'emi-page', 'compare-page'];
+            const tabs = ['sip-tab', 'emi-tab', 'compare-tab'];
+            
+            pages.forEach(pageId => {
+                document.getElementById(pageId).classList.add('hidden');
+            });
+            tabs.forEach(tabId => {
+                document.getElementById(tabId).classList.remove('tab-active');
+            });
 
-            if (tabName === 'sip') {
-                sipPage.classList.remove('hidden');
-                emiPage.classList.add('hidden');
-                sipTab.classList.add('tab-active');
-                emiTab.classList.remove('tab-active');
-            } else {
-                sipPage.classList.add('hidden');
-                emiPage.classList.remove('hidden');
-                sipTab.classList.remove('tab-active');
-                emiTab.classList.add('tab-active');
+            document.getElementById(`${tabName}-page`).classList.remove('hidden');
+            document.getElementById(`${tabName}-tab`).classList.add('tab-active');
+        }
+
+        // --- STATS HELPER FUNCTIONS ---
+        const mean = arr => arr.reduce((a, b) => a + b, 0) / arr.length;
+        const median = arr => {
+            const mid = Math.floor(arr.length / 2);
+            const nums = [...arr].sort((a, b) => a - b);
+            return arr.length % 2 !== 0 ? nums[mid] : (nums[mid - 1] + nums[mid]) / 2;
+        };
+        const stdDev = (arr) => {
+            const arrMean = mean(arr);
+            const sqDiff = arr.map(k => (k - arrMean) ** 2);
+            const avgSqDiff = mean(sqDiff);
+            return Math.sqrt(avgSqDiff);
+        };
+        // Box-Muller transform to get a standard normal random variable
+        const sampleNormal = () => Math.sqrt(-2 * Math.log(Math.random())) * Math.cos(2 * Math.PI * Math.random());
+
+        // Build forward log-sums for a GBM path over N periods with step dt
+        // Returns L of length N+1 where L[k] = sum_{j=k}^{N-1} r_j, and L[N] = 0
+        function buildForwardLogSums(N, annualDrift, annualVol, dt) {
+            const mu_dt = (annualDrift - 0.5 * annualVol * annualVol) * dt;
+            const sigma_sqrt_dt = annualVol * Math.sqrt(dt);
+
+            const r = new Float64Array(N);     // per-period log-returns
+            for (let t = 0; t < N; t++) {
+                r[t] = mu_dt + sigma_sqrt_dt * sampleNormal();
             }
+
+            const L = new Float64Array(N + 1); // forward log-sums
+            L[N] = 0.0;
+            for (let t = N - 1; t >= 0; t--) {
+                L[t] = L[t + 1] + r[t];
+            }
+            return L;
         }
 
         // --- SIP CALCULATOR LOGIC ---
@@ -256,13 +388,13 @@
 
             setTimeout(() => {
                 const wealthDistribution = simulateSipWealth(sipAmount, tenureYears, annualDrift, annualVolatility, frequency, numPaths);
-                wealthDistribution.sort((a, b) => a - b);
-
+                
                 const totalInvested = sipAmount * tenureYears * getPeriodsPerYear(frequency);
-                const meanWealth = wealthDistribution.reduce((a, b) => a + b, 0) / numPaths;
-                const medianWealth = wealthDistribution[Math.floor(numPaths / 2)];
-                const p10 = wealthDistribution[Math.floor(numPaths * 0.1)];
-                const p90 = wealthDistribution[Math.floor(numPaths * 0.9)];
+                const meanWealth = mean(wealthDistribution);
+                const medianWealth = median(wealthDistribution);
+                const sortedWealth = [...wealthDistribution].sort((a,b) => a-b);
+                const p10 = sortedWealth[Math.floor(numPaths * 0.1)];
+                const p90 = sortedWealth[Math.floor(numPaths * 0.9)];
 
                 const summaryDiv = document.getElementById('sip-summary');
                 summaryDiv.innerHTML = `
@@ -285,37 +417,45 @@
 
         function simulateSipWealth(sipAmount, tenureYears, annualDrift, annualVolatility, frequency, numPaths) {
             const periodsPerYear = getPeriodsPerYear(frequency);
-            const totalInstallments = tenureYears * periodsPerYear;
-            const finalWealthDistribution = new Array(numPaths).fill(0);
-            const installmentTenures = Array.from({ length: totalInstallments }, (_, i) => (totalInstallments - i) / periodsPerYear);
+            const N = tenureYears * periodsPerYear;
+            if (N <= 0) return new Array(numPaths).fill(0);
+            const dt = 1 / periodsPerYear;
 
-            for (let j = 0; j < numPaths; j++) {
-                let totalWealthForPath = 0;
-                for (let k = 0; k < totalInstallments; k++) {
-                    const T_k = installmentTenures[k];
-                    const Z = Math.sqrt(-2 * Math.log(Math.random())) * Math.cos(2 * Math.PI * Math.random());
-                    const W_T_k = Z * Math.sqrt(T_k);
-                    const driftTerm = (annualDrift - 0.5 * Math.pow(annualVolatility, 2)) * T_k;
-                    const stochasticTerm = annualVolatility * W_T_k;
-                    const futureValue = sipAmount * Math.exp(driftTerm + stochasticTerm);
-                    totalWealthForPath += futureValue;
+            const finalWealthDistribution = new Array(numPaths);
+
+            for (let p = 0; p < numPaths; p++) {
+                // One GBM return path for the entire horizon (this is the key fix)
+                const L = buildForwardLogSums(N, annualDrift, annualVolatility, dt);
+
+                // Start-of-period contributions: each installment at period k compounds with exp(L[k])
+                let total = 0;
+                for (let k = 0; k < N; k++) {
+                    total += sipAmount * Math.exp(L[k]);
                 }
-                finalWealthDistribution[j] = totalWealthForPath;
+                finalWealthDistribution[p] = total;
             }
             return finalWealthDistribution;
         }
 
-        function plotSipDistribution(wealthData, mean, median) {
-            const useCrores = mean >= 7500000;
-            const divisor = useCrores ? 10000000 : 100000;
-            const suffix = useCrores ? ' Cr' : ' L';
-            const xAxisTitle = `Accumulated Wealth (${suffix.trim()})`;
-            const displayWealthData = wealthData.map(d => d / divisor);
-            const displayMean = mean / divisor;
-            const displayMedian = median / divisor;
+        function scaleForDisplay(valuesArray) {
+            const maxVal = Math.max(...valuesArray.filter(v => isFinite(v)));
+            if (maxVal >= 10000000) return { divisor: 10000000, suffix: 'Cr' };
+            if (maxVal >= 100000) return { divisor: 100000, suffix: 'L' };
+            if (maxVal >= 1000) return { divisor: 1000, suffix: 'K' };
+            return { divisor: 1, suffix: '₹' };
+        }
 
-            const trace = { x: displayWealthData, type: 'histogram', histnorm: 'probability density', name: 'Wealth Distribution', marker: { color: 'rgba(59, 130, 246, 0.7)', line: { color: 'rgba(30, 64, 175, 1)', width: 1 } }, hovertemplate: `Wealth: %{x:.2f}${suffix}<br>Density: %{y}<extra></extra>` };
-            const layout = { title: 'Distribution of Final Corpus', xaxis: { title: xAxisTitle, automargin: true }, yaxis: { title: 'Probability Density', automargin: true }, shapes: [ { type: 'line', x0: displayMean, y0: 0, x1: displayMean, y1: 1, yref: 'paper', line: { color: '#ef4444', width: 2, dash: 'dash' } }, { type: 'line', x0: displayMedian, y0: 0, x1: displayMedian, y1: 1, yref: 'paper', line: { color: '#10b981', width: 2, dash: 'dot' } } ], annotations: [ { x: displayMean, y: 0.95, yref: 'paper', text: `Mean: ${formatCurrency(mean, true)}`, showarrow: false, xanchor: 'left', font: {color: '#ef4444'}}, { x: displayMedian, y: 0.85, yref: 'paper', text: `Median: ${formatCurrency(median, true)}`, showarrow: false, xanchor: 'right', font: {color: '#10b981'}} ], showlegend: false, margin: { l: 70, r: 50, b: 60, t: 80, pad: 4 } };
+        function plotSipDistribution(wealthData, meanVal, medianVal) {
+            const { divisor, suffix } = scaleForDisplay(wealthData);
+            const xAxisTitle = `Accumulated Wealth (${suffix})`;
+            const displayWealthData = wealthData.map(d => d / divisor);
+            const displayMean = meanVal / divisor;
+            const displayMedian = medianVal / divisor;
+            const displayStdDev = stdDev(wealthData) / divisor;
+            const xAxisRange = [displayMean - 4 * displayStdDev, displayMean + 4 * displayStdDev];
+
+            const trace = { x: displayWealthData, type: 'histogram', histnorm: 'probability density', name: 'Wealth Distribution', marker: { color: 'rgba(59, 130, 246, 0.7)', line: { color: 'rgba(30, 64, 175, 1)', width: 1 } }, hovertemplate: `Wealth: %{x:.2f} ${suffix}<br>Density: %{y}<extra></extra>` };
+            const layout = { title: 'Distribution of Final Corpus', xaxis: { title: xAxisTitle, automargin: true, range: xAxisRange }, yaxis: { title: 'Probability Density', automargin: true }, shapes: [ { type: 'line', x0: displayMean, y0: 0, x1: displayMean, y1: 1, yref: 'paper', line: { color: '#ef4444', width: 2, dash: 'dash' } }, { type: 'line', x0: displayMedian, y0: 0, x1: displayMedian, y1: 1, yref: 'paper', line: { color: '#10b981', width: 2, dash: 'dot' } } ], annotations: [ { x: displayMean, y: 0.95, yref: 'paper', text: `Mean: ${formatCurrency(meanVal, true)}`, showarrow: false, xanchor: 'left', font: {color: '#ef4444'}}, { x: displayMedian, y: 0.85, yref: 'paper', text: `Median: ${formatCurrency(medianVal, true)}`, showarrow: false, xanchor: 'right', font: {color: '#10b981'}} ], showlegend: false, margin: { l: 70, r: 50, b: 60, t: 80, pad: 4 } };
             Plotly.newPlot('sip-chart', [trace], layout, {responsive: true});
         }
 
@@ -326,9 +466,9 @@
             const tenureYears = parseInt(document.getElementById('loanTenure').value);
 
             document.getElementById('emi-initial-message').classList.add('hidden');
-            const monthlyRate = (annualRate / 12) / 100;
+            const emi = computeEMI(principal, annualRate, tenureYears);
+            
             const numPayments = tenureYears * 12;
-            const emi = (principal * monthlyRate * Math.pow(1 + monthlyRate, numPayments)) / (Math.pow(1 + monthlyRate, numPayments) - 1);
             const totalPayment = emi * numPayments;
             const totalInterest = totalPayment - principal;
 
@@ -340,6 +480,13 @@
             plotCumulativeAmortization(schedule);
             
             document.getElementById('emi-results-container').classList.remove('hidden');
+        }
+        
+        function computeEMI(principal, annualRatePct, tenureYears) {
+             if (principal <= 0 || annualRatePct <= 0 || tenureYears <= 0) return 0;
+            const monthlyRate = (annualRatePct / 12) / 100;
+            const numPayments = tenureYears * 12;
+            return (principal * monthlyRate * Math.pow(1 + monthlyRate, numPayments)) / (Math.pow(1 + monthlyRate, numPayments) - 1);
         }
 
         function generateAmortizationSchedule(principal, annualRate, tenureYears, emi) {
@@ -384,13 +531,7 @@
             const cumInterest = schedule.map(row => row.cumulative_interest_paid);
             const cumPrincipal = schedule.map(row => row.cumulative_principal_paid);
 
-            const maxYValue = Math.max(cumInterest[cumInterest.length - 1], cumPrincipal[cumPrincipal.length - 1]);
-            let divisor = 1;
-            let suffix = '₹';
-
-            if (maxYValue >= 10000000) { divisor = 10000000; suffix = 'Cr'; } 
-            else if (maxYValue >= 100000) { divisor = 100000; suffix = 'L'; }
-            else if (maxYValue >= 1000) { divisor = 1000; suffix = 'K'; }
+            const { divisor, suffix } = scaleForDisplay(cumInterest.concat(cumPrincipal));
 
             const displayCumInterest = cumInterest.map(d => d / divisor);
             const displayCumPrincipal = cumPrincipal.map(d => d / divisor);
@@ -407,6 +548,195 @@
 
             Plotly.newPlot('emi-cumulative-chart', [principalTrace, interestTrace], layout, {responsive: true});
         }
+        
+        // --- EMI vs SIP COMPARISON LOGIC ---
+        function calculateCompare() {
+            const params = {
+                assetAmount: parseFloat(document.getElementById('compareAssetAmount').value.replace(/,/g, '')),
+                loanRate: parseFloat(document.getElementById('compareLoanRate').value),
+                loanTenure: parseInt(document.getElementById('compareLoanTenure').value),
+                startRent: parseFloat(document.getElementById('compareStartRent').value.replace(/,/g, '')),
+                rentInflation: parseFloat(document.getElementById('compareRentInflation').value) / 100,
+                assetDrift: parseFloat(document.getElementById('compareAssetDrift').value) / 100,
+                assetVol: parseFloat(document.getElementById('compareAssetVol').value) / 100,
+                sipDrift: parseFloat(document.getElementById('compareSipDrift').value) / 100,
+                sipVol: parseFloat(document.getElementById('compareSipVol').value) / 100,
+                numPaths: Math.min(parseInt(document.getElementById('compareNumPaths').value), 50000) // cap paths
+            };
+            
+            if (Object.values(params).some(p => isNaN(p) || p < 0)) {
+                alert("Please ensure all inputs are valid numbers.");
+                return;
+            }
+
+            document.getElementById('compare-loader').classList.remove('hidden');
+            document.getElementById('compare-results-container').classList.add('hidden');
+            document.getElementById('compare-initial-message').classList.add('hidden');
+
+            setTimeout(() => {
+                const results = simulateCompare(params);
+                renderCompareResults(results);
+                document.getElementById('compare-loader').classList.add('hidden');
+                document.getElementById('compare-results-container').classList.remove('hidden');
+            }, 50);
+        }
+
+        function buildRentSeries(startRent, annualInflPct, tenureYears) {
+            const totalMonths = tenureYears * 12;
+            const rentSeries = new Array(totalMonths);
+            for (let i = 0; i < totalMonths; i++) {
+                const currentYear = Math.floor(i / 12);
+                rentSeries[i] = startRent * Math.pow(1 + annualInflPct, currentYear);
+            }
+            return rentSeries;
+        }
+        
+        function simulateCompare(params) {
+            const { assetAmount, loanRate, loanTenure, startRent, rentInflation, assetDrift, assetVol, sipDrift, sipVol, numPaths } = params;
+
+            const emi = computeEMI(assetAmount, loanRate, loanTenure);
+            const rentSeries = buildRentSeries(startRent, rentInflation, loanTenure);
+            const totalMonths = loanTenure * 12;
+
+            const assetTerminals = new Array(numPaths);
+            const sipTerminals = new Array(numPaths);
+            const diffs = new Array(numPaths);
+
+            // Precompute constants for asset terminal GBM
+            const muAssetT = (assetDrift - 0.5 * assetVol * assetVol) * loanTenure;
+            const sigmaAssetSqrtT = assetVol * Math.sqrt(loanTenure);
+
+            // SIP per-period step
+            const dt = 1 / 12;
+
+            for (let i = 0; i < numPaths; i++) {
+                // --- Asset terminal value (unchanged) ---
+                const Z_asset = sampleNormal();
+                const assetTerminal = assetAmount * Math.exp(muAssetT + sigmaAssetSqrtT * Z_asset);
+                assetTerminals[i] = assetTerminal;
+
+                // --- SIP terminal value (FIXED) ---
+                if (totalMonths <= 0) {
+                    sipTerminals[i] = 0;
+                    diffs[i] = -assetTerminal;
+                    continue;
+                }
+
+                // Build one monthly GBM path and forward log-sums for SIP
+                const Lsip = buildForwardLogSums(totalMonths, sipDrift, sipVol, dt);
+
+                let sipTerminalValue = 0;
+                for (let m = 0; m < totalMonths; m++) {
+                    const contribution = Math.max(emi - rentSeries[m], 0);
+                    if (contribution > 0) {
+                        // start-of-month contribution compounds with exp(Lsip[m])
+                        sipTerminalValue += contribution * Math.exp(Lsip[m]);
+                    }
+                }
+
+                sipTerminals[i] = sipTerminalValue;
+                diffs[i] = sipTerminalValue - assetTerminal;
+            }
+
+            const finalRent = rentSeries.length > 0 ? rentSeries[rentSeries.length - 1] : 0;
+            return { assetTerminals, sipTerminals, diffs, emi, finalRent };
+        }
+        
+        function renderCompareResults({ assetTerminals, sipTerminals, diffs, emi, finalRent }) {
+            const stats = {
+                assetMean: mean(assetTerminals),
+                assetMedian: median(assetTerminals),
+                sipMean: mean(sipTerminals),
+                sipMedian: median(sipTerminals),
+                diffMean: mean(diffs),
+                diffMedian: median(diffs),
+                diffStdDev: stdDev(diffs),
+                probSipBeatsAsset: diffs.filter(d => d > 0).length / diffs.length
+            };
+
+            const summaryDiv = document.getElementById('compare-summary');
+            summaryDiv.innerHTML = `
+                <div class="bg-gray-100 p-3 rounded-lg"><p class="text-sm text-gray-600">Monthly EMI</p><p class="text-xl font-bold text-gray-900">${formatCurrency(emi)}</p></div>
+                <div class="bg-orange-100 p-3 rounded-lg"><p class="text-sm text-orange-800">Final Month's Rent</p><p class="text-xl font-bold text-orange-900">${formatCurrency(finalRent)}</p></div>
+                <div class="bg-blue-100 p-3 rounded-lg"><p class="text-sm text-blue-800">Asset (Buy) Mean</p><p class="text-xl font-bold text-blue-900">${formatCurrency(stats.assetMean, true)}</p></div>
+                <div class="bg-blue-100 p-3 rounded-lg"><p class="text-sm text-blue-800">Asset (Buy) Median</p><p class="text-xl font-bold text-blue-900">${formatCurrency(stats.assetMedian, true)}</p></div>
+                <div class="bg-green-100 p-3 rounded-lg"><p class="text-sm text-green-800">SIP (Rent) Mean</p><p class="text-xl font-bold text-green-900">${formatCurrency(stats.sipMean, true)}</p></div>
+                <div class="bg-green-100 p-3 rounded-lg"><p class="text-sm text-green-800">SIP (Rent) Median</p><p class="text-xl font-bold text-green-900">${formatCurrency(stats.sipMedian, true)}</p></div>
+                <div class="bg-purple-100 p-3 rounded-lg col-span-2 md:col-span-4"><p class="text-sm text-purple-800">Probability SIP Beats Asset</p><p class="text-xl font-bold text-purple-900">${(stats.probSipBeatsAsset * 100).toFixed(1)}%</p></div>
+            `;
+
+            const allValues = [...assetTerminals, ...sipTerminals, ...diffs];
+            const displayUnits = scaleForDisplay(allValues);
+            
+            plotOverlap(assetTerminals, sipTerminals, displayUnits, stats);
+            plotDiff(diffs, displayUnits, stats);
+        }
+
+        function plotOverlap(assetValues, sipValues, units, stats) {
+            const displayAsset = assetValues.map(v => v / units.divisor);
+            const displaySip = sipValues.map(v => v / units.divisor);
+            
+            const assetTrace = { x: displayAsset, type: 'histogram', histnorm: 'probability density', name: 'Asset (Buy)', opacity: 0.75, marker: { color: 'rgba(59, 130, 246, 0.7)' } };
+            const sipTrace = { x: displaySip, type: 'histogram', histnorm: 'probability density', name: 'SIP (Rent)', opacity: 0.75, marker: { color: 'rgba(16, 185, 129, 0.7)' } };
+
+            const stdDevAsset = stdDev(assetValues);
+            const stdDevSip = stdDev(sipValues);
+            const displayMeanAsset = stats.assetMean / units.divisor;
+            const displayStdDevAsset = stdDevAsset / units.divisor;
+            const lowerAsset = displayMeanAsset - 4 * displayStdDevAsset;
+            const upperAsset = displayMeanAsset + 4 * displayStdDevAsset;
+            const displayMeanSip = stats.sipMean / units.divisor;
+            const displayStdDevSip = stdDevSip / units.divisor;
+            const lowerSip = displayMeanSip - 4 * displayStdDevSip;
+            const upperSip = displayMeanSip + 4 * displayStdDevSip;
+            const xAxisRange = [Math.min(lowerAsset, lowerSip), Math.max(upperAsset, upperSip)];
+
+            const layout = {
+                title: 'Overlapped Distributions of Terminal Wealth',
+                xaxis: { title: `Value (${units.suffix})`, range: xAxisRange },
+                yaxis: { title: 'Probability Density' },
+                barmode: 'overlay',
+                legend: { x: 0.5, y: 1.1, xanchor: 'center', orientation: 'h' },
+                shapes: [
+                    { type: 'line', x0: stats.assetMean/units.divisor, y0: 0, x1: stats.assetMean/units.divisor, y1: 1, yref: 'paper', line: { color: '#3b82f6', width: 2, dash: 'dash' } },
+                    { type: 'line', x0: stats.sipMean/units.divisor, y0: 0, x1: stats.sipMean/units.divisor, y1: 1, yref: 'paper', line: { color: '#10b981', width: 2, dash: 'dash' } }
+                ],
+                annotations: [
+                    { x: stats.assetMean/units.divisor, y: 0.95, yref: 'paper', text: `Asset Mean: ${formatCurrency(stats.assetMean, true)}`, showarrow: false, xanchor: 'left', font: { color: '#3b82f6' } },
+                    { x: stats.sipMean/units.divisor, y: 0.85, yref: 'paper', text: `SIP Mean: ${formatCurrency(stats.sipMean, true)}`, showarrow: false, xanchor: 'left', font: { color: '#10b981' } }
+                ]
+            };
+            Plotly.newPlot('compare-overlap-chart', [assetTrace, sipTrace], layout, {responsive: true});
+        }
+        
+        function plotDiff(diffs, units, stats) {
+            const displayDiffs = diffs.map(v => v / units.divisor);
+
+            const trace = { x: displayDiffs, type: 'histogram', histnorm: 'probability density', name: 'Difference', marker: { color: 'rgba(139, 92, 246, 0.7)' } };
+            
+            const displayMeanDiff = stats.diffMean / units.divisor;
+            const displayStdDevDiff = stats.diffStdDev / units.divisor;
+            const xAxisRange = [displayMeanDiff - 4 * displayStdDevDiff, displayMeanDiff + 4 * displayStdDevDiff];
+            
+            const layout = {
+                title: 'Distribution of Difference (SIP − Asset)',
+                xaxis: { title: `Difference in Value (${units.suffix})`, range: xAxisRange },
+                yaxis: { title: 'Probability Density' },
+                shapes: [
+                    { type: 'line', x0: 0, y0: 0, x1: 0, y1: 1, yref: 'paper', line: { color: '#6b7280', width: 2 } }, // Breakeven
+                    { type: 'line', x0: stats.diffMean/units.divisor, y0: 0, x1: stats.diffMean/units.divisor, y1: 1, yref: 'paper', line: { color: '#ef4444', width: 2, dash: 'dash' } },
+                    { type: 'line', x0: stats.diffMedian/units.divisor, y0: 0, x1: stats.diffMedian/units.divisor, y1: 1, yref: 'paper', line: { color: '#f59e0b', width: 2, dash: 'dot' } }
+                ],
+                annotations: [
+                    { x: stats.diffMean/units.divisor, y: 0.95, yref: 'paper', text: `Mean: ${formatCurrency(stats.diffMean, true)}`, showarrow: false, xanchor: 'left', font: { color: '#ef4444' } },
+                    { x: stats.diffMedian/units.divisor, y: 0.85, yref: 'paper', text: `Median: ${formatCurrency(stats.diffMedian, true)}`, showarrow: false, xanchor: 'right', font: { color: '#f59e0b' } }
+                ]
+            };
+            Plotly.newPlot('compare-diff-chart', [trace], layout, {responsive: true});
+        }
+
     </script>
 </body>
 </html>
+
+
