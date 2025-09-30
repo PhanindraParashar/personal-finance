@@ -1,5 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
+<!-- 
+    This page is designed to be fully responsive and optimized for a wide range of devices,
+    including high-resolution mobile phones (like Samsung S24 Ultra, OnePlus), 
+    tablets (Samsung Tab S6/S8), and high-DPI desktop displays (Mac M1/M2 Pro).
+    The layout uses Tailwind CSS with carefully selected breakpoints (sm, md, lg) 
+    to ensure optimal viewing and usability across all screen sizes.
+-->
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -34,21 +41,21 @@
 
     <div class="container mx-auto p-4 md:p-8 max-w-7xl">
         <header class="text-center mb-8">
-            <h1 class="text-4xl font-bold text-gray-900">Personal Finance Toolkit</h1>
-            <p class="text-lg text-gray-600 mt-2">Your guide to smart investment and loan planning.</p>
+            <h1 class="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900">Personal Finance Toolkit</h1>
+            <p class="text-base sm:text-lg text-gray-600 mt-2">Your guide to smart investment and loan planning.</p>
         </header>
 
         <!-- Tabs -->
         <div class="mb-8">
             <div class="border-b border-gray-200">
                 <nav class="-mb-px flex flex-wrap justify-center space-x-4 md:space-x-8" aria-label="Tabs">
-                    <button id="sip-tab" onclick="switchTab('sip')" class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-lg tab-active">
+                    <button id="sip-tab" onclick="switchTab('sip')" class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-base sm:text-lg tab-active">
                         SIP Calculator
                     </button>
-                    <button id="emi-tab" onclick="switchTab('emi')" class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-lg text-gray-500 hover:text-gray-700 hover:border-gray-300">
+                    <button id="emi-tab" onclick="switchTab('emi')" class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-base sm:text-lg text-gray-500 hover:text-gray-700 hover:border-gray-300">
                         EMI Calculator
                     </button>
-                    <button id="compare-tab" onclick="switchTab('compare')" class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-lg text-gray-500 hover:text-gray-700 hover:border-gray-300">
+                    <button id="compare-tab" onclick="switchTab('compare')" class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-base sm:text-lg text-gray-500 hover:text-gray-700 hover:border-gray-300">
                         EMI vs SIP
                     </button>
                 </nav>
@@ -59,8 +66,8 @@
         <div id="sip-page">
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 <!-- SIP Inputs -->
-                <div class="lg:col-span-1 bg-white p-6 rounded-xl shadow-md">
-                    <h2 class="text-2xl font-semibold mb-6 border-b pb-4">Investment Parameters</h2>
+                <div class="lg:col-span-1 bg-white p-4 sm:p-6 rounded-xl shadow-md">
+                    <h2 class="text-xl sm:text-2xl lg:text-3xl font-semibold mb-6 border-b pb-4">Investment Parameters</h2>
                     <div class="space-y-5">
                         <div>
                             <label for="sipAmount" class="block text-sm font-medium text-gray-700">SIP Amount (₹)</label>
@@ -95,8 +102,8 @@
                 </div>
 
                 <!-- SIP Results -->
-                <div class="lg:col-span-2 bg-white p-6 rounded-xl shadow-md">
-                    <h2 class="text-2xl font-semibold mb-4">Projected Wealth Distribution</h2>
+                <div class="lg:col-span-2 bg-white p-4 sm:p-6 rounded-xl shadow-md">
+                    <h2 class="text-xl sm:text-2xl lg:text-3xl font-semibold mb-4">Projected Wealth Distribution</h2>
                      <div id="sip-loader" class="hidden flex justify-center items-center h-96">
                         <div class="loader"></div>
                     </div>
@@ -104,7 +111,7 @@
                         <div id="sip-summary" class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6 text-center"></div>
                         <div id="sip-chart" class="w-full h-96"></div>
                     </div>
-                     <div id="sip-initial-message" class="flex items-center justify-center h-full text-gray-500">
+                     <div id="sip-initial-message" class="flex items-center justify-center h-full text-gray-500 text-center p-4">
                         <p>Enter your investment details and click "Calculate Wealth" to see your projection.</p>
                     </div>
                 </div>
@@ -115,8 +122,8 @@
         <div id="emi-page" class="hidden">
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 <!-- EMI Inputs -->
-                <div class="lg:col-span-1 bg-white p-6 rounded-xl shadow-md">
-                    <h2 class="text-2xl font-semibold mb-6 border-b pb-4">Loan Parameters</h2>
+                <div class="lg:col-span-1 bg-white p-4 sm:p-6 rounded-xl shadow-md">
+                    <h2 class="text-xl sm:text-2xl lg:text-3xl font-semibold mb-6 border-b pb-4">Loan Parameters</h2>
                     <div class="space-y-5">
                         <div>
                             <label for="loanAmount" class="block text-sm font-medium text-gray-700">Loan Amount (₹)</label>
@@ -138,14 +145,14 @@
                 </div>
 
                 <!-- EMI Results -->
-                <div class="lg:col-span-2 bg-white p-6 rounded-xl shadow-md">
-                    <h2 class="text-2xl font-semibold mb-4">Loan Repayment Details</h2>
+                <div class="lg:col-span-2 bg-white p-4 sm:p-6 rounded-xl shadow-md">
+                    <h2 class="text-xl sm:text-2xl lg:text-3xl font-semibold mb-4">Loan Repayment Details</h2>
                     <div id="emi-results-container" class="hidden">
                         <div id="emi-summary" class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6 text-center"></div>
                         <div id="emi-chart" class="w-full h-96"></div>
                         <div id="emi-cumulative-chart" class="w-full h-96 mt-12"></div>
                     </div>
-                    <div id="emi-initial-message" class="flex items-center justify-center h-full text-gray-500">
+                    <div id="emi-initial-message" class="flex items-center justify-center h-full text-gray-500 text-center p-4">
                         <p>Enter your loan details and click "Calculate EMI" to see your repayment schedule.</p>
                     </div>
                 </div>
@@ -155,13 +162,13 @@
         <!-- EMI vs SIP Page -->
         <div id="compare-page" class="hidden">
             <div class="text-center mb-6">
-                <h2 class="text-3xl font-semibold">EMI vs SIP: Buy vs Rent & Invest</h2>
-                <p class="text-md text-gray-600 mt-1">Simulating future values using Monte Carlo to compare owning an asset versus renting and investing the difference.</p>
+                <h2 class="text-2xl sm:text-3xl lg:text-4xl font-semibold">EMI vs SIP: Buy vs Rent & Invest</h2>
+                <p class="text-sm sm:text-md text-gray-600 mt-1">Simulating future values to compare owning an asset versus renting and investing the difference.</p>
             </div>
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 <!-- Comparison Inputs -->
-                <div class="lg:col-span-1 bg-white p-6 rounded-xl shadow-md">
-                    <h2 class="text-2xl font-semibold mb-6 border-b pb-4">Comparison Parameters</h2>
+                <div class="lg:col-span-1 bg-white p-4 sm:p-6 rounded-xl shadow-md">
+                    <h2 class="text-xl sm:text-2xl lg:text-3xl font-semibold mb-6 border-b pb-4">Comparison Parameters</h2>
                     <div class="space-y-4">
                         <!-- Asset Price (Centered Top) -->
                         <div>
@@ -170,8 +177,8 @@
                             <p id="compareAssetAmountWords" class="text-xs text-gray-500 mt-1 h-4"></p>
                         </div>
                         
-                        <!-- Two-Column Layout -->
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 pt-2">
+                        <!-- Two-Column Layout for inputs -->
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 pt-2">
                             <!-- Left Column: Loan Details -->
                             <div class="space-y-4">
                                 <h3 class="font-semibold text-gray-700">Loan & Asset</h3>
@@ -215,7 +222,7 @@
                                  <div>
                                     <label for="compareNumPaths" class="block text-sm font-medium text-gray-700">Simulations (Paths)</label>
                                     <input type="number" id="compareNumPaths" value="10000" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
-                                    <p class="text-xs text-gray-500 mt-1">Number of Monte Carlo simulation paths to run (higher = more accuracy, but slower).</p>
+                                    <p class="text-xs text-gray-500 mt-1">Higher paths = more accuracy, but slower.</p>
                                 </div>
                             </div>
                         </div>
@@ -229,7 +236,7 @@
                     </div>
                 </div>
                  <!-- Comparison Results -->
-                <div class="lg:col-span-2 bg-white p-6 rounded-xl shadow-md">
+                <div class="lg:col-span-2 bg-white p-4 sm:p-6 rounded-xl shadow-md">
                      <div id="compare-loader" class="hidden flex justify-center items-center h-full">
                         <div class="loader"></div>
                     </div>
@@ -238,7 +245,7 @@
                          <div id="compare-overlap-chart" class="w-full h-96"></div>
                          <div id="compare-diff-chart" class="w-full h-96 mt-12"></div>
                     </div>
-                    <div id="compare-initial-message" class="flex items-center justify-center h-full text-gray-500">
+                    <div id="compare-initial-message" class="flex items-center justify-center h-full text-gray-500 text-center p-4">
                         <p>Enter your parameters and click "Compare" to run the simulation.</p>
                     </div>
                 </div>
@@ -398,10 +405,10 @@
 
                 const summaryDiv = document.getElementById('sip-summary');
                 summaryDiv.innerHTML = `
-                    <div class="bg-gray-100 p-4 rounded-lg"><p class="text-sm text-gray-600">Total Invested</p><p class="text-xl font-bold text-gray-900">${formatCurrency(totalInvested)}</p></div>
-                    <div class="bg-blue-100 p-4 rounded-lg"><p class="text-sm text-blue-800">Expected (Mean)</p><p class="text-xl font-bold text-blue-900">${formatCurrency(meanWealth, true)}</p></div>
-                    <div class="bg-green-100 p-4 rounded-lg"><p class="text-sm text-green-800">Median (50%)</p><p class="text-xl font-bold text-green-900">${formatCurrency(medianWealth, true)}</p></div>
-                    <div class="bg-yellow-100 p-4 rounded-lg"><p class="text-sm text-yellow-800">80% Prob. Range</p><p class="text-xl font-bold text-yellow-900">${formatCurrency(p10, true)} - ${formatCurrency(p90, true)}</p></div>`;
+                    <div class="bg-gray-100 p-4 rounded-lg"><p class="text-sm text-gray-600">Total Invested</p><p class="text-lg sm:text-xl font-bold text-gray-900">${formatCurrency(totalInvested)}</p></div>
+                    <div class="bg-blue-100 p-4 rounded-lg"><p class="text-sm text-blue-800">Expected (Mean)</p><p class="text-lg sm:text-xl font-bold text-blue-900">${formatCurrency(meanWealth, true)}</p></div>
+                    <div class="bg-green-100 p-4 rounded-lg"><p class="text-sm text-green-800">Median (50%)</p><p class="text-lg sm:text-xl font-bold text-green-900">${formatCurrency(medianWealth, true)}</p></div>
+                    <div class="bg-yellow-100 p-4 rounded-lg"><p class="text-sm text-yellow-800">80% Prob. Range</p><p class="text-lg sm:text-xl font-bold text-yellow-900">${formatCurrency(p10, true)} - ${formatCurrency(p90, true)}</p></div>`;
 
                 plotSipDistribution(wealthDistribution, meanWealth, medianWealth);
 
@@ -424,10 +431,7 @@
             const finalWealthDistribution = new Array(numPaths);
 
             for (let p = 0; p < numPaths; p++) {
-                // One GBM return path for the entire horizon (this is the key fix)
                 const L = buildForwardLogSums(N, annualDrift, annualVolatility, dt);
-
-                // Start-of-period contributions: each installment at period k compounds with exp(L[k])
                 let total = 0;
                 for (let k = 0; k < N; k++) {
                     total += sipAmount * Math.exp(L[k]);
@@ -473,7 +477,7 @@
             const totalInterest = totalPayment - principal;
 
             const summaryDiv = document.getElementById('emi-summary');
-            summaryDiv.innerHTML = `<div class="bg-blue-100 p-4 rounded-lg"><p class="text-sm text-blue-800">Monthly EMI</p><p class="text-2xl font-bold text-blue-900">${formatCurrency(emi)}</p></div><div class="bg-red-100 p-4 rounded-lg"><p class="text-sm text-red-800">Total Interest</p><p class="text-2xl font-bold text-red-900">${formatCurrency(totalInterest)}</p></div><div class="bg-gray-100 p-4 rounded-lg"><p class="text-sm text-gray-600">Total Payment</p><p class="text-2xl font-bold text-gray-900">${formatCurrency(totalPayment)}</p></div>`;
+            summaryDiv.innerHTML = `<div class="bg-blue-100 p-4 rounded-lg"><p class="text-sm text-blue-800">Monthly EMI</p><p class="text-xl sm:text-2xl font-bold text-blue-900">${formatCurrency(emi)}</p></div><div class="bg-red-100 p-4 rounded-lg"><p class="text-sm text-red-800">Total Interest</p><p class="text-xl sm:text-2xl font-bold text-red-900">${formatCurrency(totalInterest)}</p></div><div class="bg-gray-100 p-4 rounded-lg"><p class="text-sm text-gray-600">Total Payment</p><p class="text-xl sm:text-2xl font-bold text-gray-900">${formatCurrency(totalPayment)}</p></div>`;
             
             const schedule = generateAmortizationSchedule(principal, annualRate, tenureYears, emi);
             plotAmortization(schedule);
@@ -518,10 +522,11 @@
             const interestTrace = { x: years, y: interestPaid, mode: 'lines', name: 'Interest Component', line: { color: 'rgb(239, 68, 68)', width: 3 } };
             
             const layout = { 
-                title: 'EMI Repayment Journey: Principal vs. Interest', 
-                xaxis: { title: 'Tenure (Years)' }, 
-                yaxis: { title: 'Amount (₹)' }, 
-                legend: { x: 0.5, y: 1.15, xanchor: 'center', orientation: 'h' } 
+                title: 'EMI Repayment Journey', 
+                xaxis: { title: 'Tenure (Years)', automargin: true }, 
+                yaxis: { title: 'Amount (₹)', automargin: true }, 
+                legend: { x: 0.5, y: 1.15, xanchor: 'center', orientation: 'h' },
+                margin: { t: 80, b: 50, l: 60, r: 30 }
             };
             Plotly.newPlot('emi-chart', [principalTrace, interestTrace], layout, {responsive: true});
         }
@@ -541,9 +546,10 @@
 
             const layout = {
                 title: 'Cumulative Repayment Progress',
-                xaxis: { title: 'Tenure (Years)' },
-                yaxis: { title: `Cumulative Amount (${suffix})` },
-                legend: { x: 0.5, y: 1.15, xanchor: 'center', orientation: 'h' }
+                xaxis: { title: 'Tenure (Years)', automargin: true },
+                yaxis: { title: `Cumulative Amount (${suffix})`, automargin: true },
+                legend: { x: 0.5, y: 1.15, xanchor: 'center', orientation: 'h' },
+                margin: { t: 80, b: 50, l: 60, r: 30 }
             };
 
             Plotly.newPlot('emi-cumulative-chart', [principalTrace, interestTrace], layout, {responsive: true});
@@ -565,6 +571,7 @@
             };
             
             if (Object.values(params).some(p => isNaN(p) || p < 0)) {
+                // Using a custom modal/toast in a real app would be better than alert()
                 alert("Please ensure all inputs are valid numbers.");
                 return;
             }
@@ -602,34 +609,26 @@
             const sipTerminals = new Array(numPaths);
             const diffs = new Array(numPaths);
 
-            // Precompute constants for asset terminal GBM
             const muAssetT = (assetDrift - 0.5 * assetVol * assetVol) * loanTenure;
             const sigmaAssetSqrtT = assetVol * Math.sqrt(loanTenure);
-
-            // SIP per-period step
             const dt = 1 / 12;
 
             for (let i = 0; i < numPaths; i++) {
-                // --- Asset terminal value (unchanged) ---
                 const Z_asset = sampleNormal();
                 const assetTerminal = assetAmount * Math.exp(muAssetT + sigmaAssetSqrtT * Z_asset);
                 assetTerminals[i] = assetTerminal;
 
-                // --- SIP terminal value (FIXED) ---
                 if (totalMonths <= 0) {
                     sipTerminals[i] = 0;
                     diffs[i] = -assetTerminal;
                     continue;
                 }
 
-                // Build one monthly GBM path and forward log-sums for SIP
                 const Lsip = buildForwardLogSums(totalMonths, sipDrift, sipVol, dt);
-
                 let sipTerminalValue = 0;
                 for (let m = 0; m < totalMonths; m++) {
                     const contribution = Math.max(emi - rentSeries[m], 0);
                     if (contribution > 0) {
-                        // start-of-month contribution compounds with exp(Lsip[m])
                         sipTerminalValue += contribution * Math.exp(Lsip[m]);
                     }
                 }
@@ -656,13 +655,13 @@
 
             const summaryDiv = document.getElementById('compare-summary');
             summaryDiv.innerHTML = `
-                <div class="bg-gray-100 p-3 rounded-lg"><p class="text-sm text-gray-600">Monthly EMI</p><p class="text-xl font-bold text-gray-900">${formatCurrency(emi)}</p></div>
-                <div class="bg-orange-100 p-3 rounded-lg"><p class="text-sm text-orange-800">Final Month's Rent</p><p class="text-xl font-bold text-orange-900">${formatCurrency(finalRent)}</p></div>
-                <div class="bg-blue-100 p-3 rounded-lg"><p class="text-sm text-blue-800">Asset (Buy) Mean</p><p class="text-xl font-bold text-blue-900">${formatCurrency(stats.assetMean, true)}</p></div>
-                <div class="bg-blue-100 p-3 rounded-lg"><p class="text-sm text-blue-800">Asset (Buy) Median</p><p class="text-xl font-bold text-blue-900">${formatCurrency(stats.assetMedian, true)}</p></div>
-                <div class="bg-green-100 p-3 rounded-lg"><p class="text-sm text-green-800">SIP (Rent) Mean</p><p class="text-xl font-bold text-green-900">${formatCurrency(stats.sipMean, true)}</p></div>
-                <div class="bg-green-100 p-3 rounded-lg"><p class="text-sm text-green-800">SIP (Rent) Median</p><p class="text-xl font-bold text-green-900">${formatCurrency(stats.sipMedian, true)}</p></div>
-                <div class="bg-purple-100 p-3 rounded-lg col-span-2 md:col-span-4"><p class="text-sm text-purple-800">Probability SIP Beats Asset</p><p class="text-xl font-bold text-purple-900">${(stats.probSipBeatsAsset * 100).toFixed(1)}%</p></div>
+                <div class="bg-gray-100 p-3 rounded-lg"><p class="text-sm text-gray-600">Monthly EMI</p><p class="text-lg sm:text-xl font-bold text-gray-900">${formatCurrency(emi)}</p></div>
+                <div class="bg-orange-100 p-3 rounded-lg"><p class="text-sm text-orange-800">Final Month's Rent</p><p class="text-lg sm:text-xl font-bold text-orange-900">${formatCurrency(finalRent)}</p></div>
+                <div class="bg-blue-100 p-3 rounded-lg"><p class="text-sm text-blue-800">Asset (Buy) Mean</p><p class="text-lg sm:text-xl font-bold text-blue-900">${formatCurrency(stats.assetMean, true)}</p></div>
+                <div class="bg-blue-100 p-3 rounded-lg"><p class="text-sm text-blue-800">Asset (Buy) Median</p><p class="text-lg sm:text-xl font-bold text-blue-900">${formatCurrency(stats.assetMedian, true)}</p></div>
+                <div class="bg-green-100 p-3 rounded-lg"><p class="text-sm text-green-800">SIP (Rent) Mean</p><p class="text-lg sm:text-xl font-bold text-green-900">${formatCurrency(stats.sipMean, true)}</p></div>
+                <div class="bg-green-100 p-3 rounded-lg"><p class="text-sm text-green-800">SIP (Rent) Median</p><p class="text-lg sm:text-xl font-bold text-green-900">${formatCurrency(stats.sipMedian, true)}</p></div>
+                <div class="bg-purple-100 p-3 rounded-lg col-span-2 md:col-span-4"><p class="text-sm text-purple-800">Prob. SIP Beats Asset</p><p class="text-lg sm:text-xl font-bold text-purple-900">${(stats.probSipBeatsAsset * 100).toFixed(1)}%</p></div>
             `;
 
             const allValues = [...assetTerminals, ...sipTerminals, ...diffs];
@@ -693,10 +692,11 @@
 
             const layout = {
                 title: 'Overlapped Distributions of Terminal Wealth',
-                xaxis: { title: `Value (${units.suffix})`, range: xAxisRange },
-                yaxis: { title: 'Probability Density' },
+                xaxis: { title: `Value (${units.suffix})`, range: xAxisRange, automargin: true },
+                yaxis: { title: 'Probability Density', automargin: true },
                 barmode: 'overlay',
                 legend: { x: 0.5, y: 1.1, xanchor: 'center', orientation: 'h' },
+                margin: { t: 80, b: 50, l: 60, r: 30 },
                 shapes: [
                     { type: 'line', x0: stats.assetMean/units.divisor, y0: 0, x1: stats.assetMean/units.divisor, y1: 1, yref: 'paper', line: { color: '#3b82f6', width: 2, dash: 'dash' } },
                     { type: 'line', x0: stats.sipMean/units.divisor, y0: 0, x1: stats.sipMean/units.divisor, y1: 1, yref: 'paper', line: { color: '#10b981', width: 2, dash: 'dash' } }
@@ -720,8 +720,9 @@
             
             const layout = {
                 title: 'Distribution of Difference (SIP − Asset)',
-                xaxis: { title: `Difference in Value (${units.suffix})`, range: xAxisRange },
-                yaxis: { title: 'Probability Density' },
+                xaxis: { title: `Difference in Value (${units.suffix})`, range: xAxisRange, automargin: true },
+                yaxis: { title: 'Probability Density', automargin: true },
+                margin: { t: 80, b: 50, l: 60, r: 30 },
                 shapes: [
                     { type: 'line', x0: 0, y0: 0, x1: 0, y1: 1, yref: 'paper', line: { color: '#6b7280', width: 2 } }, // Breakeven
                     { type: 'line', x0: stats.diffMean/units.divisor, y0: 0, x1: stats.diffMean/units.divisor, y1: 1, yref: 'paper', line: { color: '#ef4444', width: 2, dash: 'dash' } },
@@ -735,8 +736,17 @@
             Plotly.newPlot('compare-diff-chart', [trace], layout, {responsive: true});
         }
 
+        window.addEventListener('resize', () => {
+            const chartIds = ['sip-chart', 'emi-chart', 'emi-cumulative-chart', 'compare-overlap-chart', 'compare-diff-chart'];
+            chartIds.forEach(id => {
+                const chartElement = document.getElementById(id);
+                if (chartElement && chartElement.data) {
+                    Plotly.Plots.resize(chartElement);
+                }
+            });
+        });
+
     </script>
 </body>
 </html>
-
 
